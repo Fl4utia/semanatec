@@ -2,6 +2,8 @@ import turtle
 import time
 from PIL import Image
 import random
+from tkinter import messagebox
+
 running = True
 win = turtle.Screen()
 win.title("Snake Game")
@@ -19,7 +21,12 @@ img = img.resize((40, 30), Image.LANCZOS)
 img.save('vaca_small.gif')
 
 win.addshape('vaca_small.gif')
-
+# Create several images of different sizes
+for i in range(1, 11):
+    img = Image.open('vaca.gif')
+    img = img.resize((40 * i, 30 * i), Image.LANCZOS)
+    img.save(f'vaca_{i}.gif')
+    win.addshape(f'vaca_{i}.gif')
 # Snake head
 head = turtle.Turtle()
 head.speed(0)
@@ -93,7 +100,7 @@ def end_game():
 
 ## Score
 score = 0
-
+size = 1
 # Score display
 score_display = turtle.Turtle()
 score_display.speed(0)
@@ -104,6 +111,11 @@ score_display.hideturtle()
 score_display.goto(0, 260)
 score_display.write("Score: {}".format(score), align="center", font=("Courier", 24, "normal"))
 
+
+# Snake body
+segments = []
+
+# Main game loop
 # Main game loop
 while running:
     win.update()
@@ -122,6 +134,10 @@ while running:
         x = random.randint(-290, 290)
         y = random.randint(-290, 290)
         food.goto(x, y)
+        
+        # Switch to a larger image
+        size += 1
+        head.shape(f'vaca_{size}.gif')
 
         # Increase the score
         score += 1
