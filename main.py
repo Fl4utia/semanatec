@@ -11,7 +11,6 @@ ZOOM_FACTOR = 3
 
 # Colors
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 
 # Directions
@@ -133,6 +132,8 @@ class Snake:
 
 class Food:
     def __init__(self):
+        self.apple_img = pygame.image.load("apple.png").convert_alpha()
+        self.apple_img = pygame.transform.scale(self.apple_img, (GRID_SIZE, GRID_SIZE))
         self.position = (random.randint(0, SCREEN_WIDTH // GRID_SIZE - 1) * GRID_SIZE,
                          random.randint(0, SCREEN_HEIGHT // GRID_SIZE - 1) * GRID_SIZE)
 
@@ -141,7 +142,7 @@ class Food:
                          random.randint(0, SCREEN_HEIGHT // GRID_SIZE - 1) * GRID_SIZE)
 
     def draw(self, surface):
-        pygame.draw.rect(surface, RED, (self.position[0], self.position[1], GRID_SIZE, GRID_SIZE))
+        surface.blit(self.apple_img, self.position)
 
 if __name__ == "__main__":
     game = SnakeGame()
