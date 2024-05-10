@@ -33,6 +33,10 @@ class SnakeGame:
         self.score = 0
         self.game_over = False
 
+        # Load grass background image and scale it
+        self.grass_bg = pygame.image.load("grass.jpeg").convert()
+        self.grass_bg = pygame.transform.scale(self.grass_bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -58,11 +62,17 @@ class SnakeGame:
             self.speed += 1
 
     def draw(self):
-        self.screen.fill(WHITE)
+        # Draw grass background
+        self.screen.blit(self.grass_bg, (0, 0))
+
+        # Draw snake and food
         self.snake.draw(self.screen, self.direction)
         self.food.draw(self.screen)
+
+        # Draw score
         text = self.font.render("Puntaje: " + str(self.score), True, BLACK)
         self.screen.blit(text, (10, 10))
+
         pygame.display.flip()
 
     def run(self):
