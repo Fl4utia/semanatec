@@ -89,10 +89,10 @@ def move():
 
 # Keyboard bindings
 win.listen()
-win.onkeypress(go_up, "w")
-win.onkeypress(go_down, "s")
-win.onkeypress(go_left, "a")
-win.onkeypress(go_right, "d")
+win.onkeypress(go_up, "Up")
+win.onkeypress(go_down, "Down")
+win.onkeypress(go_left, "Left")
+win.onkeypress(go_right, "Right")
 
 def end_game():
     global running
@@ -111,17 +111,45 @@ score_display.hideturtle()
 score_display.goto(0, 260)
 score_display.write("Score: {}".format(score), align="center", font=("Courier", 24, "normal"))
 
+paused = False
+def toggle_pause():
+    global paused
+    paused = not paused
+
+# Keyboard binding for pausing and resuming the game
+win.onkeypress(toggle_pause, "p")
 
 # Snake body
 segments = []
 
-# Main game loop
+def on_respuesta1_click(x, y):
+    # Aquí es donde pones el código que quieres que se ejecute cuando se hace clic en "respuesta1"
+    global paused
+    paused = False
+    img_turtle_suma.hideturtle()
+    img_turtle_respuesta1.hideturtle()
+    img_turtle_respuesta2.hideturtle()
+    img_turtle_suma.clear()
+    img_turtle_resta.clear()
+    img_turtle_respuesta1.clear()
+    img_turtle_respuesta2.clear()
+
+
+def on_respuesta2_click(x, y):
+    # Aquí es donde pones el código que quieres que se ejecute cuando se hace clic en "respuesta2"
+    end_game()
+
+
 # Main game loop
 while running:
+    while paused:
+        time.sleep(0.1)
+        win.update()
+
     win.update()
 
     # Check for a collision with the border
-    if head.xcor()>290 or head.xcor()<-290 or head.ycor()>290 or head.ycor()<-290:
+    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
         head.goto(0, 0)
         head.direction = "Stop"
         # Optional: Hide the snake head when game is over
@@ -130,11 +158,6 @@ while running:
 
     # Check for a collision with the food
     if head.distance(food) < 20:
-        # Move the food to a random spot on the screen
-        x = random.randint(-290, 290)
-        y = random.randint(-290, 290)
-        food.goto(x, y)
-        
         # Switch to a larger image
         size += 1
         head.shape(f'vaca_{size}.gif')
@@ -143,6 +166,69 @@ while running:
         score += 1
         score_display.clear()
         score_display.write("Score: {}".format(score), align="center", font=("Courier", 24, "normal"))
+        # Pause the game
+        paused = True
+
+        # Move the food to a random spot on the screen
+        x = random.randint(-290, 290)
+        y = random.randint(-290, 290)
+        food.goto(x, y)
+        
+        if score == 2:
+        # Display image options
+            win.addshape("suma6_small.gif")
+            win.addshape("suma4_small.gif")
+            win.addshape("suma5_small.gif")
+
+            # Create turtles for image options
+            img_turtle_suma = turtle.Turtle()
+            img_turtle_respuesta1 = turtle.Turtle()
+            img_turtle_respuesta2 = turtle.Turtle()
+
+            # Set shapes for turtles
+            img_turtle_suma.shape("suma4_small.gif")
+            img_turtle_respuesta1.shape("suma5_small.gif")
+            img_turtle_respuesta2.shape("suma6_small.gif")
+
+
+
+            # Set positions for turtles
+            img_turtle_respuesta1.goto(0, -100)
+            img_turtle_respuesta2.goto(0, -200)
+
+            img_turtle_respuesta1.onclick(on_respuesta1_click)
+            img_turtle_respuesta2.onclick(on_respuesta2_click)
+
+            while paused:
+                time.sleep(0.1)
+                win.update()
+
+        if score == 4:
+            win.addshape("resta2_small.gif")
+            win.addshape("suma5_small.gif")
+            win.addshape("resta_small.gif")
+
+            img_turtle_resta = turtle.Turtle()
+            img_turtle_respuesta1 = turtle.Turtle()
+            img_turtle_respuesta2 = turtle.Turtle()
+
+            img_turtle_resta.shape("resta2_small.gif")
+            img_turtle_respuesta1.shape("suma5_small.gif")
+            img_turtle_respuesta2.shape("resta_small.gif")
+
+            img_turtle_respuesta1.goto(0, -100)
+            img_turtle_respuesta2.goto(0, -200)
+
+            img_turtle_respuesta1.onclick(on_respuesta1_click)
+            img_turtle_respuesta2.onclick(on_respuesta2_click)
+
+            while paused:
+                time.sleep(0.1)
+                win.update()
+
+        # Resume the game
+        paused = False
+
 
     # Move the snake
     move()
