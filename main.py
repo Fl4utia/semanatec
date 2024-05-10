@@ -7,6 +7,7 @@ SCREEN_HEIGHT = 600
 GRID_SIZE = 20
 SNAKE_SIZE = 20
 INITIAL_SPEED = 10
+ZOOM_FACTOR = 3
 
 # Colors
 WHITE = (255, 255, 255)
@@ -59,7 +60,7 @@ class SnakeGame:
 
     def draw(self):
         self.screen.fill(WHITE)
-        self.snake.draw(self.screen)
+        self.snake.draw(self.screen, self.direction)
         self.food.draw(self.screen)
         text = self.font.render("Score: " + str(self.score), True, BLACK)
         self.screen.blit(text, (10, 10))
@@ -77,8 +78,16 @@ class Snake:
     def __init__(self):
         self.body = [(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)]
         self.length = 1
-        self.cow_img = pygame.image.load("vaca_1.gif").convert_alpha()
-        self.cow_img = pygame.transform.scale(self.cow_img, (SNAKE_SIZE, SNAKE_SIZE))
+        self.cow_img_up = pygame.image.load("cow_walk_top.png").convert_alpha()
+        self.cow_img_down = pygame.image.load("cow_walk_bottom.png").convert_alpha()
+        self.cow_img_left = pygame.image.load("cow_walk_left.png").convert_alpha()
+        self.cow_img_right = pygame.image.load("cow_walk_right.png").convert_alpha()
+        self.cow_img_size = (GRID_SIZE * ZOOM_FACTOR, GRID_SIZE * ZOOM_FACTOR)  # Zoom the image
+        self.cow_img_up = pygame.transform.scale(self.cow_img_up, self.cow_img_size)
+        self.cow_img_down = pygame.transform.scale(self.cow_img_down, self.cow_img_size)
+        self.cow_img_left = pygame.transform.scale(self.cow_img_left, self.cow_img_size)
+        self.cow_img_right = pygame.transform.scale(self.cow_img_right, self.cow_img_size)
+        self.cow_img = self.cow_img_right
 
     def move(self, direction):
         head = self.body[0]
@@ -88,16 +97,30 @@ class Snake:
         self.body.insert(0, new_head)
         if len(self.body) > self.length:
             self.body.pop()
+        if direction == UP:
+            self.cow_img = self.cow_img_up
+        elif direction == DOWN:
+            self.cow_img = self.cow_img_down
+        elif direction == LEFT:
+            self.cow_img = self.cow_img_left
+        elif direction == RIGHT:
+            self.cow_img = self.cow_img_right
 
     def grow(self):
         self.length += 1
 
-    def draw(self, surface):
+    def draw(self, surface, direction):
         for i, segment in enumerate(self.body):
-            if i == 0:
-                surface.blit(self.cow_img, (segment[0], segment[1]))
-            else:
-                surface.blit(self.cow_img, (segment[0], segment[1]))
+            if direction == UP:
+                adjusted_pos = (segment[0], segment[1] + i * (GRID_SIZE // 2))
+            elif direction == DOWN:
+                adjusted_pos = (segment[0], segment[1] - i * (GRID_SIZE // 2))
+            elif direction == LEFT:
+                adjusted_pos = (segment[0] + i * (GRID_SIZE), segment[1])
+            elif direction == RIGHT:
+                adjusted_pos = (segment[0] - i * (GRID_SIZE), segment[1])
+            zoomed_segment = (adjusted_pos[0] - GRID_SIZE * (ZOOM_FACTOR - 1) / 2, adjusted_pos[1] - GRID_SIZE * (ZOOM_FACTOR - 1) / 2)
+            surface.blit(self.cow_img, zoomed_segment)
 
     def check_collision(self):
         head = self.body[0]
