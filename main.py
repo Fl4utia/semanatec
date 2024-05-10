@@ -21,9 +21,26 @@ RIGHT = (1, 0)
 
 # Math questions and answers
 MATH_QUESTIONS = [
-    ("2 + 2", 4, [3, 4, 5, 6]),
-    ("10 - 7", 3, [1, 2, 3, 4]),
-    ("6 / 2", 3, [1, 2, 3, 4])
+    ("1 + 1", 2, [1, 2, 3, 4]),
+    ("3 - 1", 2, [1, 2, 3, 4]),
+    ("2 + 3", 5, [3, 4, 5, 6]),
+    ("4 - 2", 2, [1, 2, 3, 4]),
+    ("5 + 1", 6, [4, 5, 6, 7]),
+    ("6 - 3", 3, [1, 2, 3, 4]),
+    ("4 + 2", 6, [5, 6, 7, 8]),
+    ("7 - 4", 3, [1, 2, 3, 4]),
+    ("5 + 3", 8, [6, 7, 8, 9]),
+    ("8 - 5", 3, [1, 2, 3, 4]),
+    ("2 + 1", 3, [2, 3, 4, 5]),
+    ("3 - 2", 1, [0, 1, 2, 3]),
+    ("4 + 1", 5, [3, 4, 5, 6]),
+    ("5 - 3", 2, [1, 2, 3, 4]),
+    ("6 + 1", 7, [5, 6, 7, 8]),
+    ("7 - 5", 2, [1, 2, 3, 4]),
+    ("8 + 2", 10, [7, 8, 9, 10]),
+    ("9 - 3", 6, [4, 5, 6, 7]),
+    ("10 + 1", 11, [9, 10, 11, 12]),
+    ("10 - 8", 2, [0, 1, 2, 3])
 ]
 
 class SnakeGame:
@@ -76,8 +93,9 @@ class SnakeGame:
 
     def display_question(self, question, answer, options):
         answered = False
-        option_texts = [self.font.render(str(option), True, BLACK) for option in options]  # Convert options to strings
-        option_rects = [option_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + i * 30)) for i, option_text in enumerate(option_texts)]
+        apple_img = pygame.image.load("apple.png").convert_alpha()
+        apple_img = pygame.transform.scale(apple_img, (GRID_SIZE, GRID_SIZE))  # Scale the apple image
+        option_rects = []  # Store rectangles for collision detection
         answer_index = options.index(answer)
 
         while not answered:
@@ -98,9 +116,15 @@ class SnakeGame:
             question_text = self.font.render(question, True, BLACK)
             self.screen.blit(question_text, (SCREEN_WIDTH / 2 - question_text.get_width() / 2, SCREEN_HEIGHT / 2 - 50))
             
-            # Display options
-            for option_text, option_rect in zip(option_texts, option_rects):
-                self.screen.blit(option_text, option_rect)
+            # Display options with apple images
+            for i, option in enumerate(options):
+                # Render the apple images for the option
+                apple_count = option
+                x_offset = SCREEN_WIDTH / 2 - (GRID_SIZE + 5) * apple_count / 2  # Adjust x position for centering
+                for j in range(apple_count):
+                    self.screen.blit(apple_img, (x_offset + j * (GRID_SIZE + 5), SCREEN_HEIGHT / 2 + i * 30))
+                option_rect = pygame.Rect(x_offset, SCREEN_HEIGHT / 2 + i * 30, (GRID_SIZE + 5) * apple_count, GRID_SIZE)
+                option_rects.append(option_rect)  # Store the rectangle for collision detection
             
             pygame.display.flip()
 
