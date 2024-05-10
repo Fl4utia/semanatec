@@ -97,6 +97,8 @@ win.onkeypress(go_right, "Right")
 def end_game():
     global running
     running = False
+    turtle.bye()
+
 
 ## Score
 score = 0
@@ -131,6 +133,7 @@ def on_respuesta1_click(x, y):
     img_turtle_respuesta2.hideturtle()
     img_turtle_suma.clear()
     img_turtle_resta.clear()
+    img_turtle_resta.hideturtle()
     img_turtle_respuesta1.clear()
     img_turtle_respuesta2.clear()
 
@@ -138,6 +141,7 @@ def on_respuesta1_click(x, y):
 def on_respuesta2_click(x, y):
     # Aquí es donde pones el código que quieres que se ejecute cuando se hace clic en "respuesta2"
     end_game()
+    turtle.bye()
 
 
 # Main game loop
@@ -174,7 +178,7 @@ while running:
         y = random.randint(-290, 290)
         food.goto(x, y)
         
-        if score == 2:
+        if score == 1:
         # Display image options
             win.addshape("suma6_small.gif")
             win.addshape("suma4_small.gif")
@@ -203,7 +207,7 @@ while running:
                 time.sleep(0.1)
                 win.update()
 
-        if score == 4:
+        if score == 2:
             win.addshape("resta2_small.gif")
             win.addshape("suma5_small.gif")
             win.addshape("resta_small.gif")
@@ -226,10 +230,31 @@ while running:
                 time.sleep(0.1)
                 win.update()
 
+        if score == 4:
+            win.addshape("sumah_small.gif")
+            win.addshape("resta_small.gif")
+            win.addshape("suma5_small.gif")
+
+            img_turtle_suma = turtle.Turtle()
+            img_turtle_respuesta1 = turtle.Turtle()
+            img_turtle_respuesta2 = turtle.Turtle()
+
+            img_turtle_suma.shape("sumah_small.gif")
+            img_turtle_respuesta1.shape("resta_small.gif")
+            img_turtle_respuesta2.shape("suma5_small.gif")
+
+            img_turtle_respuesta1.goto(0, -100)
+            img_turtle_respuesta2.goto(0, -200)
+
+            img_turtle_respuesta1.onclick(on_respuesta1_click)
+            img_turtle_respuesta2.onclick(on_respuesta2_click)
+
+            while paused:
+                time.sleep(0.1)
+                win.update()
+
         # Resume the game
         paused = False
-
-
     # Move the snake
     move()
     time.sleep(delay)
