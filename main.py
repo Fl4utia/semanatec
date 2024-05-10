@@ -184,8 +184,9 @@ class Food:
                          random.randint(0, SCREEN_HEIGHT // GRID_SIZE - 1) * GRID_SIZE)
 
     def spawn(self):
-        self.position = (random.randint(0, SCREEN_WIDTH // GRID_SIZE - 1) * GRID_SIZE,
-                         random.randint(0, SCREEN_HEIGHT // GRID_SIZE - 1) * GRID_SIZE)
+        x = random.randint(1, (SCREEN_WIDTH // GRID_SIZE - 2)) * GRID_SIZE
+        y = random.randint(1, (SCREEN_HEIGHT // GRID_SIZE - 2)) * GRID_SIZE
+        self.position = (x, y)
 
     def draw(self, surface):
         surface.blit(self.apple_img, self.position)
