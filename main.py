@@ -19,6 +19,13 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
+# Math questions and answers
+MATH_QUESTIONS = [
+    ("2 + 2", 4, [3, 4, 5, 6]),
+    ("10 - 7", 3, [1, 2, 3, 4]),
+    ("6 / 2", 3, [1, 2, 3, 4])
+]
+
 class SnakeGame:
     def __init__(self):
         pygame.init()
@@ -32,6 +39,7 @@ class SnakeGame:
         self.direction = RIGHT
         self.score = 0
         self.game_over = False
+        self.answered_correctly = False
 
         # Load grass background image and scale it
         self.grass_bg = pygame.image.load("grass.jpeg").convert()
@@ -56,10 +64,45 @@ class SnakeGame:
         if self.snake.check_collision():
             self.game_over = True
         if self.snake.body[0] == self.food.position:
+            # Display math question
+            question, answer, options = random.choice(MATH_QUESTIONS)
+            self.display_question(question, answer, options)
+            
+        if self.snake.body[0] == self.food.position and self.answered_correctly:
             self.snake.grow()
-            self.score += 1
             self.food.spawn()
             self.speed += 1
+            self.answered_correctly = False
+
+    def display_question(self, question, answer, options):
+        answered = False
+        option_texts = [self.font.render(str(option), True, BLACK) for option in options]  # Convert options to strings
+        option_rects = [option_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + i * 30)) for i, option_text in enumerate(option_texts)]
+        answer_index = options.index(answer)
+
+        while not answered:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    for i, option_rect in enumerate(option_rects):
+                        if option_rect.collidepoint(mouse_pos):
+                            if i == answer_index:
+                                self.score += 1
+                                self.answered_correctly = True
+                            answered = True
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        answered = True
+                
+            self.screen.blit(self.grass_bg, (0, 0))
+            question_text = self.font.render(question, True, BLACK)
+            self.screen.blit(question_text, (SCREEN_WIDTH / 2 - question_text.get_width() / 2, SCREEN_HEIGHT / 2 - 50))
+            
+            # Display options
+            for option_text, option_rect in zip(option_texts, option_rects):
+                self.screen.blit(option_text, option_rect)
+            
+            pygame.display.flip()
 
     def draw(self):
         # Draw grass background
@@ -83,7 +126,7 @@ class SnakeGame:
                 self.draw()
                 self.clock.tick(self.speed)
 
-            self.screen.fill(WHITE)
+            self.screen.blit(self.grass_bg, (0, 0))
             game_over_text = self.font.render("Perdiste!", True, BLACK)
             game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50))
             self.screen.blit(game_over_text, game_over_rect)
@@ -118,6 +161,7 @@ class SnakeGame:
         self.direction = RIGHT
         self.score = 0
         self.game_over = False
+        self.answered_correctly = False
 
 class Snake:
     def __init__(self):
@@ -184,8 +228,12 @@ class Food:
                          random.randint(0, SCREEN_HEIGHT // GRID_SIZE - 1) * GRID_SIZE)
 
     def spawn(self):
-        x = random.randint(1, (SCREEN_WIDTH // GRID_SIZE - 2)) * GRID_SIZE
-        y = random.randint(1, (SCREEN_HEIGHT // GRID_SIZE - 2)) * GRID_SIZE
+        center_range_x = (SCREEN_WIDTH // 2 - 100, SCREEN_WIDTH // 2 + 100)
+        center_range_y = (SCREEN_HEIGHT // 2 - 100, SCREEN_HEIGHT // 2 + 100)
+        
+        x = random.randint(center_range_x[0] // GRID_SIZE, center_range_x[1] // GRID_SIZE) * GRID_SIZE
+        y = random.randint(center_range_y[0] // GRID_SIZE, center_range_y[1] // GRID_SIZE) * GRID_SIZE
+        
         self.position = (x, y)
 
     def draw(self, surface):
