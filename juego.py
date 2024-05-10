@@ -207,7 +207,7 @@ while running:
                 time.sleep(0.1)
                 win.update()
 
-        if score == 2:
+        if score == 3:
             win.addshape("resta2_small.gif")
             win.addshape("suma5_small.gif")
             win.addshape("resta_small.gif")
@@ -242,6 +242,29 @@ while running:
             img_turtle_suma.shape("sumah_small.gif")
             img_turtle_respuesta1.shape("resta_small.gif")
             img_turtle_respuesta2.shape("suma5_small.gif")
+
+            img_turtle_respuesta1.goto(0, -100)
+            img_turtle_respuesta2.goto(0, -200)
+
+            img_turtle_respuesta1.onclick(on_respuesta1_click)
+            img_turtle_respuesta2.onclick(on_respuesta2_click)
+
+            while paused:
+                time.sleep(0.1)
+                win.update()
+
+        if score == 8:
+            win.addshape("sumacinco_small.gif")
+            win.addshape("cinco_small.gif")
+            win.addshape("suma6_small.gif")
+
+            img_turtle_suma = turtle.Turtle()
+            img_turtle_respuesta1 = turtle.Turtle()
+            img_turtle_respuesta2 = turtle.Turtle()
+
+            img_turtle_suma.shape("sumacinco_small.gif")
+            img_turtle_respuesta1.shape("cinco_small.gif")
+            img_turtle_respuesta2.shape("suma6_small.gif")
 
             img_turtle_respuesta1.goto(0, -100)
             img_turtle_respuesta2.goto(0, -200)
