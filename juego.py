@@ -2,7 +2,6 @@ import turtle
 import time
 from PIL import Image
 import random
-from tkinter import messagebox
 
 running = True
 win = turtle.Screen()
