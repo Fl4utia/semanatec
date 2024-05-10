@@ -23,7 +23,7 @@ class SnakeGame:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption("Snake Game")
+        pygame.display.set_caption("CowQuest")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont(None, 36)
         self.snake = Snake()
@@ -61,17 +61,53 @@ class SnakeGame:
         self.screen.fill(WHITE)
         self.snake.draw(self.screen, self.direction)
         self.food.draw(self.screen)
-        text = self.font.render("Score: " + str(self.score), True, BLACK)
+        text = self.font.render("Puntaje: " + str(self.score), True, BLACK)
         self.screen.blit(text, (10, 10))
         pygame.display.flip()
 
     def run(self):
-        while not self.game_over:
-            self.handle_events()
-            self.update()
-            self.draw()
-            self.clock.tick(self.speed)
-        pygame.quit()
+        while True:
+            while not self.game_over:
+                self.handle_events()
+                self.update()
+                self.draw()
+                self.clock.tick(self.speed)
+
+            self.screen.fill(WHITE)
+            game_over_text = self.font.render("Perdiste!", True, BLACK)
+            game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50))
+            self.screen.blit(game_over_text, game_over_rect)
+
+            score_text = self.font.render("Puntaje: " + str(self.score), True, BLACK)
+            score_rect = score_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+            self.screen.blit(score_text, score_rect)
+
+            play_again_text = self.font.render("Presiona V para volver a jugar | Presiona S para salir", True, BLACK)
+            play_again_rect = play_again_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 50))
+            self.screen.blit(play_again_text, play_again_rect)
+
+            pygame.display.flip()
+
+            while self.game_over:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        return
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_s:
+                            pygame.quit()
+                            return
+                        elif event.key == pygame.K_v:
+                            self.reset()
+                            self.game_over = False
+
+    def reset(self):
+        self.snake = Snake()
+        self.food = Food()
+        self.speed = INITIAL_SPEED
+        self.direction = RIGHT
+        self.score = 0
+        self.game_over = False
 
 class Snake:
     def __init__(self):
